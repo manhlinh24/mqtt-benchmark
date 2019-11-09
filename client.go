@@ -31,11 +31,6 @@ func (c *Client) Run(res chan *RunResults) {
 	donePub := make(chan bool)
 	runResults := new(RunResults)
 
-	clientID := fmt.Sprintf("%d", c.ID)
-	if c.ClientID != "" {
-		clientID = c.ClientID
-	}
-
 	started := time.Now()
 	// start generator
 	go c.genMessages(newMsgs, doneGen)
@@ -125,6 +120,10 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 		}
 	}
 
+	clientID := fmt.Sprintf("%d", c.ID)
+	if c.ClientID != "" {
+		clientID = c.ClientID
+	}
 	opts := mqtt.NewClientOptions().
 		AddBroker(c.BrokerURL).
 		SetClientID(fmt.Sprintf("%v", clientID)).
