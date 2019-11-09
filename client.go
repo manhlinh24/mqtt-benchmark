@@ -21,6 +21,7 @@ type Client struct {
 	MsgCount   int
 	MsgQoS     byte
 	Quiet      bool
+        ClientID   string
 }
 
 func (c *Client) Run(res chan *RunResults) {
@@ -29,6 +30,11 @@ func (c *Client) Run(res chan *RunResults) {
 	doneGen := make(chan bool)
 	donePub := make(chan bool)
 	runResults := new(RunResults)
+
+	clientID := fmt.Sprintf("%d", c.ID)
+	if c.ClientID != "" {
+		clientID = c.ClientID
+	}
 
 	started := time.Now()
 	// start generator
@@ -121,7 +127,8 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 
 	opts := mqtt.NewClientOptions().
 		AddBroker(c.BrokerURL).
-		SetClientID(fmt.Sprintf("web_668_123", time.Now().Format(time.RFC3339Nano), c.ID)).
+		#SetClientID(fmt.Sprintf("web_668_123", time.Now().Format(time.RFC3339Nano), c.ID)).
+		SetClientID(fmt.Sprintf("%v", clientID)).
 		SetCleanSession(true).
 		SetAutoReconnect(true).
 		SetOnConnectHandler(onConnected).
